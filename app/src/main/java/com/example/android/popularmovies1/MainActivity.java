@@ -1,11 +1,11 @@
 package com.example.android.popularmovies1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -42,10 +42,10 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
          * Using findViewById, we get a reference to our RecyclerView from xml. This allows us to
          * do things like set the adapter of the RecyclerView and toggle the visibility.
          */
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_id);
+        mRecyclerView = findViewById(R.id.recyclerview_id);
 
         /* This TextView is used to display errors and will be hidden if there are no errors */
-        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message);
+        mErrorMessageDisplay = findViewById(R.id.tv_error_message);
 
         // Calculate the number of columns based on context resolution and width of grid item
         int numberOfColumns = calculateNumberOfColumns(this, 180);
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         mRecyclerView.setHasFixedSize(true);
 
         /*
-         * The ForecastAdapter is responsible for linking our movie data with the Views that
+         * The MovieAdapter is responsible for linking our movie data with the Views that
          * will end up displaying our movie data.
          */
         mMovieAdapter = new MovieAdapter();
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
          * Please note: This so called "ProgressBar" isn't a bar by default. It is more of a
          * circle. We didn't make the rules (or the names of Views), we just follow them.
          */
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
         /* Once all of our views are setup, we can load the movie data. */
         loadMovieData(NetworkUtils.SortType.POPULAR);
@@ -85,7 +85,14 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
     @Override
     public void onItemClick(View view, int position) {
 
-        Log.i("TAG", "You clicked number " + mMovieAdapter.getItem(position) + ", which is at position " + position);
+        Log.i("TAG", "You clicked number " + mMovieAdapter.getItem(position).getTitle() + ", which is at position " + position);
+        launchMovieDetailActivity(position);
+    }
+
+    private void launchMovieDetailActivity(int position) {
+        Intent intent = new Intent(this, MovieDetailActivity.class);
+        intent.putExtra("movie", mMovieAdapter.getItem(position));
+        startActivity(intent);
     }
 
     // Create a menu to manage two type of sorting
@@ -119,20 +126,18 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
      *
      * Source: https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
      *
-     * @param context
-     * @param widthOfGridItem
-     * @return
+     * @param context the context
+     * @param widthOfGridItem the width of the single item
+     * @return the number of columns that it is possible to show in a row
      */
     private int calculateNumberOfColumns(Context context, int widthOfGridItem) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        int numberOfColumns = (int) (dpWidth / widthOfGridItem);
-        return numberOfColumns;
+        return (int) (dpWidth / widthOfGridItem);
     }
 
     /**
-     * This method will get the user's preferred location for weather, and then tell some
-     * background method to get the weather data in the background.
+     * Load movie data (in background) with the selected sorting type
      */
     private void loadMovieData(NetworkUtils.SortType sortType) {
         showMovieDataView();
@@ -142,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
     /**
      * This method will make the View for the movie data visible and
      * hide the error message.
-     * <p>
+     *
      * Since it is okay to redundantly set the visibility of a View, we don't
      * need to check whether each view is currently visible or invisible.
      */
@@ -156,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
     /**
      * This method will make the error message visible and hide the movie
      * View.
-     * <p>
+     *
      * Since it is okay to redundantly set the visibility of a View, we don't
      * need to check whether each view is currently visible or invisible.
      */
@@ -190,9 +195,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
                 String jsonMovieResponse = NetworkUtils
                         .getResponseFromHttpUrl(movieRequestUrl);
 
-                ArrayList<Movie> simpleJsonMovieData = OpenMovieJsonUtils.getMoviesFromJson(MainActivity.this, jsonMovieResponse);
-
-                return simpleJsonMovieData;
+                return OpenMovieJsonUtils.getMoviesFromJson(MainActivity.this, jsonMovieResponse);
 
             } catch (Exception e) {
                 e.printStackTrace();

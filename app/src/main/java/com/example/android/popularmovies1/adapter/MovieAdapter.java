@@ -1,13 +1,11 @@
 package com.example.android.popularmovies1.adapter;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.android.popularmovies1.R;
 import com.example.android.popularmovies1.model.Movie;
@@ -21,11 +19,10 @@ import java.util.ArrayList;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
-    //TODO Aggiornato
-    // private String[] mMovieData;
     private ArrayList<Movie> mMovies;
     private ItemClickListener mClickListener;
 
+    // Store context to be used in onBindViewHolder
     private Context mContext;
 
     public MovieAdapter() {
@@ -38,7 +35,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public MovieAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        //Context context = viewGroup.getContext();
         mContext = viewGroup.getContext();
         int layoutIdForGridItem = R.layout.movie_grid_view;
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -50,19 +46,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     /**
      * OnBindViewHolder is called by the RecyclerView to display the data at the specified
-     * position. In this method, we update the contents of the ViewHolder to display the weather
-     * details for this particular position, using the "position" argument that is conveniently
-     * passed into us.
+     * position. In this method, we update the contents of the ViewHolder to display the movie
+     * details, using the "position" argument that is conveniently passed into us.
      */
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
-        //TODO Aggiornato
-        //String movie = mMovieData[position];
-
         String moviePosterPath = mMovies.get(position).getPosterPath();
-        //holder.mMovieTextView.setText(movie);
         Picasso.with(mContext)
-                .load("http://image.tmdb.org/t/p/w185/" + moviePosterPath)
+                .load(moviePosterPath)
                 .into(holder.mMoviePosterImageView);
     }
 
@@ -74,23 +65,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     @Override
     public int getItemCount() {
-        //TODO Aggiornato
         if(null == mMovies) return 0;
         return mMovies.size();
-
-        //if (null == mMovieData) return 0;
-        //return mMovieData.length;
     }
 
-    /**
-     * This method is used to set the movies on a ForecastAdapter if we've already
-     * created one. This is handy when we get new data from the web but don't want to create a
-     * new ForecastAdapter to display it.
-     */
-    //TODO Aggiornato
     public void setMovieData(ArrayList<Movie> movieData) {
-        //TODO Aggiornato
-        // mMovieData = movieData;
         mMovies = movieData;
         notifyDataSetChanged();
     }
@@ -99,10 +78,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         this.mClickListener = itemClickListener;
     }
 
-    public String getItem(int id) {
-        //TODO Aggiornato
-        return mMovies.get(id).getTitle();
-        //return mMovieData[id];
+    public Movie getItem(int id) {
+        return mMovies.get(id);
     }
 
     /**
@@ -111,13 +88,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Declare the data item
-        //private TextView mMovieTextView;
         private ImageView mMoviePosterImageView;
 
-        public MovieAdapterViewHolder(View view) {
+        private MovieAdapterViewHolder(View view) {
             super(view);
-            //mMovieTextView = (TextView) view.findViewById(R.id.tv_movie_data);
-            mMoviePosterImageView = (ImageView) view.findViewById(R.id.iv_movie_poster);
+            mMoviePosterImageView = view.findViewById(R.id.iv_movie_poster);
             itemView.setOnClickListener(this);
         }
 
