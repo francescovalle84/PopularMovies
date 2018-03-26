@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
          * Use this setting to improve performance if you know that changes in content do not
          * change the child layout size in the RecyclerView
          */
-        //mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
 
         /*
          * The ForecastAdapter is responsible for linking our movie data with the Views that
@@ -88,12 +88,14 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         Log.i("TAG", "You clicked number " + mMovieAdapter.getItem(position) + ", which is at position " + position);
     }
 
+    // Create a menu to manage two type of sorting
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    // If one of the menu items is clicked, load again data with the selected type of sorting
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         NetworkUtils.SortType sortType;
@@ -113,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
     }
 
     /**
+     * Calculate dynamically the number of posters that is possible to show in a row
+     *
      * Source: https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
      *
      * @param context
@@ -163,9 +167,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
-
-
-    //TODO Aggiornato
     public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
         @Override
@@ -175,10 +176,9 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         }
 
         @Override
-        //TODO Aggiornato
         protected ArrayList<Movie> doInBackground(String... params) {
 
-            /* If there's no zip code, there's nothing to look up. */
+            /* If there's no sorting type specified, do nothing. */
             if (params.length == 0) {
                 return null;
             }
@@ -201,12 +201,10 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         }
 
         @Override
-        //TODO Aggiornato
         protected void onPostExecute(ArrayList<Movie> movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 showMovieDataView();
-                // COMPLETED (45) Instead of iterating through every string, use mForecastAdapter.setWeatherData and pass in the weather data
                 mMovieAdapter.setMovieData(movieData);
             } else {
                 showErrorMessage();
