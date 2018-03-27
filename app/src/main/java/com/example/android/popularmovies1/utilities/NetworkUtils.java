@@ -2,6 +2,7 @@ package com.example.android.popularmovies1.utilities;
 
 import android.net.Uri;
 
+import com.example.android.popularmovies1.BuildConfig;
 import com.example.android.popularmovies1.R;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class NetworkUtils {
 
     final static String THEMOVIEDB_BASE_URL = "http://api.themoviedb.org/3/movie";
 
-    final static String THEMOVIEDB_API_VALUE = "YOUR_API_KEY";
+    final static String THEMOVIEDB_API_VALUE = BuildConfig.API_KEY;
 
     /**
      * Builds the URL used to query theMovieDb.
